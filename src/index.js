@@ -1,9 +1,12 @@
 import axios from 'axios';
 
-export default async (req=axios) => {
-  const response = await req(`https://www.cbr-xml-daily.ru/daily_json.js`);
+const currencies = ['USD', 'EUR', 'SEK', 'UAH'];
+
+export default async (req = axios) => {
+  const response = await req('https://www.cbr-xml-daily.ru/daily_json.js');
   const { Date, Valute } = response.data;
-  console.log(response.data)
-  const { USD, EUR, SEK, UAH } = Valute;
-  return { Date, USD, EUR, SEK, UAH };
+  return currencies.reduce((acc, el) => {
+    const { Name, Nominal, Value } = Valute[el];
+    return { ...acc, [el]: { Name, Nominal, Value } };
+  }, { Date });
 };
